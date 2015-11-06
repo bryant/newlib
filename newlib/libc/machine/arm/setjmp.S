@@ -11,13 +11,24 @@
 #endif
 
 #define SYM(x) CONCAT (__USER_LABEL_PREFIX__, x)
+#define PSYM(x) __USER_LABEL_PREFIX__\x
 
 #ifdef __ELF__
+
 #define TYPE(x) .type SYM(x),function
 #define SIZE(x) .size SYM(x), . - SYM(x)
+
+#define PTYPE(x) .type PSYM(x),function
+#define PSIZE(x) .size PSYM(x), . - PSYM(x)
+
 #else
+
 #define TYPE(x)
 #define SIZE(x)
+
+#define PTYPE(x)
+#define PSIZE(x)
+
 #endif
 
 /* Arm/Thumb interworking support:
@@ -139,7 +150,7 @@ SYM (longjmp):
 	bx	pc
 	nop	
 	.code 32
-SYM (.arm_start_of.\name):
+__USER_LABEL_PREFIX__.arm_start_of.\name:
 .endm
 #else /* Arm */
 #define	MODE		.code 32
@@ -151,15 +162,15 @@ SYM (.arm_start_of.\name):
 	.text
 	.align 2
 	MODE
-	.globl SYM (\name)
-	TYPE (\name)
-SYM (\name):
+	.globl PSYM (name)
+	PTYPE (name)
+PSYM (name):
 	PROLOGUE \name
 .endm
 
 .macro FUNC_END name
 	RET
-	SIZE (\name)
+	PSIZE (name)
 .endm
 	
 /* --------------------------------------------------------------------
