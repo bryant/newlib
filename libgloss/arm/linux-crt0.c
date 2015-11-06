@@ -31,8 +31,9 @@ __attribute__((naked))
 void _start(void)
 #endif
 {
-	register int *sp asm("sp");
-	_main(*sp, (char **)(sp + 1));
+    asm("ldr r0, [sp]");
+    asm("ldr r1, [sp, #4]");
+    asm("bl _main");
 }
 
 static int _main(int argc, char *argv[])
